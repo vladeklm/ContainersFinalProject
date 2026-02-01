@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentiment-service
+  labels:
+    app: sentiment
+spec:
+  selector:
+    app: sentiment
+  ports:
+    - name: web         # <--- ВАЖНО! Эту строку нужно добавить
+      protocol: TCP
+      port: 80
+      targetPort: 8084
+  type: LoadBalancer

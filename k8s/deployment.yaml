@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentiment-app
+  labels:
+    app: sentiment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sentiment
+  template:
+    metadata:
+      labels:
+        app: sentiment
+    spec:
+      containers:
+        - name: sentiment-app
+          image: sentiment-app:1.0
+          imagePullPolicy: Never # Используем локальный образ
+          ports:
+            - containerPort: 8084
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 30  # <-- Ждать 30 сек перед первой проверкой
+            periodSeconds: 10       # <-- Проверять каждые 10 сек
+          readinessProbe:           # <-- Рекомендуется добавить и пробу готовности
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 5
+            periodSeconds: 5
